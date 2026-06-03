@@ -1,0 +1,230 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Organigrama</title>
+    <link rel="stylesheet" href="styles.css" />
+    <script>
+      (function () {
+        const saved =
+          localStorage.getItem("theme") ||
+          (window.matchMedia("(prefers-color-scheme: dark)").matches
+            ? "dark"
+            : "light");
+        document.documentElement.setAttribute("data-theme", saved);
+      })();
+    </script>
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="site-header__title">
+        <span class="site-header__area" id="headerArea"></span>
+        <span class="site-header__sep">:</span>
+        <span class="site-header__team" id="headerTeam"></span>
+      </div>
+      <label class="theme-toggle" title="Toggle theme">
+        <input type="checkbox" id="themeCheck" />
+        <span class="theme-toggle__track">
+          <span class="theme-toggle__icon theme-toggle__sun">&#9728;</span>
+          <span class="theme-toggle__icon theme-toggle__moon">&#9790;</span>
+          <span class="theme-toggle__thumb"></span>
+        </span>
+      </label>
+    </header>
+
+    <script>
+      (function () {
+        const check = document.getElementById("themeCheck");
+        const saved =
+          localStorage.getItem("theme") ||
+          (window.matchMedia("(prefers-color-scheme: dark)").matches
+            ? "dark"
+            : "light");
+        if (saved === "dark") check.checked = true;
+        check.addEventListener("change", function () {
+          const theme = this.checked ? "dark" : "light";
+          document.documentElement.setAttribute("data-theme", theme);
+          localStorage.setItem("theme", theme);
+        });
+      })();
+    </script>
+
+    <div class="oc-wrap" id="oc-wrap"></div>
+
+    <!-- js-yaml: YAML parser, no build step required -->
+    <script src="https://cdn.jsdelivr.net/npm/js-yaml@4/dist/js-yaml.min.js"></script>
+    <script>
+      // Inject a <style> block with per-theme CSS custom properties derived from org.yaml.
+      // Each .oc-box[data-ct="<theme>"] block sets --t-* variables consumed by styles.css.
+      function injectThemeStyles(themes) {
+        const lines = [];
+        for (const [name, t] of Object.entries(themes)) {
+          const borderStyle = t.dashed ? "dashed" : "solid";
+          const nameBorder = t.name_border ? "var(--t-border)" : "transparent";
+          lines.push(
+            `.oc-box[data-ct="${name}"] {`,
+            `  --t-hd-bg: ${t.header_bg};`,
+            `  --t-hd-text: ${t.header_text};`,
+            `  --t-bd-bg: ${t.body_bg};`,
+            `  --t-bd-text: ${t.body_text};`,
+            `  --t-border: ${t.border};`,
+            `  --t-border-style: ${borderStyle};`,
+            `  --t-name-border: ${nameBorder};`,
+            `}`,
+          );
+          if (t.dark) {
+            const d = t.dark;
+            const darkLines = [
+              d.header_bg ? `  --t-hd-bg: ${d.header_bg};` : null,
+              d.header_text ? `  --t-hd-text: ${d.header_text};` : null,
+              d.body_bg ? `  --t-bd-bg: ${d.body_bg};` : null,
+              d.body_text ? `  --t-bd-text: ${d.body_text};` : null,
+              d.border ? `  --t-border: ${d.border};` : null,
+            ].filter(Boolean);
+            if (darkLines.length) {
+              lines.push(
+                `[data-theme="dark"] .oc-box[data-ct="${name}"] {`,
+                ...darkLines,
+                `}`,
+              );
+            }
+          }
+        }
+        const style = document.createElement("style");
+        style.textContent = lines.join("\n");
+        document.head.appendChild(style);
+      }
+
+      // Build a single card element from a node descriptor.
+      function makeCard(node) {
+        const box = document.createElement("div");
+        box.className = "oc-box";
+        box.dataset.ct = node.theme;
+
+        ["name", "role", "func"].forEach((field) => {
+          const el = document.createElement("div");
+          el.className = field;
+          el.textContent = node[field];
+          box.appendChild(el);
+        });
+
+        if (node.badge) {
+          const badge = document.createElement("span");
+          badge.className = node.badge === "NEW" ? "badge-new" : "badge-e";
+          badge.textContent = node.badge;
+          box.appendChild(badge);
+        } else if (node.emoji) {
+          const emoji = document.createElement("span");
+          emoji.className = "badge-emoji";
+          emoji.textContent = node.emoji;
+          box.appendChild(emoji);
+        }
+
+        return box;
+      }
+
+      // Build a column element from a column descriptor.
+      // A descriptor with `name` renders a header card; without `name` it's anonymous (members only).
+      function makeColumn(col) {
+        const column = document.createElement("div");
+        column.className = "oc-column";
+
+        const stem = document.createElement("div");
+        stem.className = "oc-stem";
+        column.appendChild(stem);
+
+        const hasHeader = col.name !== undefined;
+        if (hasHeader) {
+          column.appendChild(makeCard(col));
+        }
+
+        if (col.columns && col.columns.length) {
+          const subCols = document.createElement("div");
+          subCols.className = "oc-columns";
+          col.columns.forEach((sub) => subCols.appendChild(makeColumn(sub)));
+          column.appendChild(subCols);
+        } else if (col.members && col.members.length) {
+          if (hasHeader) {
+            const vline = document.createElement("div");
+            vline.className = "oc-vline short";
+            column.appendChild(vline);
+          }
+          const members = document.createElement("div");
+          members.className = "oc-members";
+          col.members.forEach((m) => members.appendChild(makeCard(m)));
+          column.appendChild(members);
+        }
+
+        return column;
+      }
+
+      // Align each horizontal connector to the exact center of the first and last child stems.
+      function updateConnectorBounds() {
+        document.querySelectorAll(".oc-columns").forEach((cols) => {
+          const columns = Array.from(cols.children).filter((el) =>
+            el.classList.contains("oc-column"),
+          );
+          if (!columns.length) return;
+
+          const firstStem = columns[0].firstElementChild;
+          const lastStem = columns[columns.length - 1].firstElementChild;
+          if (!firstStem || !lastStem) return;
+
+          const colsRect = cols.getBoundingClientRect();
+          const firstRect = firstStem.getBoundingClientRect();
+          const lastRect = lastStem.getBoundingClientRect();
+
+          const left = firstRect.left + firstRect.width / 2 - colsRect.left;
+          const right = colsRect.right - (lastRect.left + lastRect.width / 2);
+
+          cols.style.setProperty("--line-left", `${left}px`);
+          cols.style.setProperty("--line-right", `${right}px`);
+        });
+      }
+
+      async function render() {
+        const wrap = document.getElementById("oc-wrap");
+        let data;
+
+        try {
+          const res = await fetch("../data/org.yaml");
+          if (!res.ok) throw new Error(`HTTP ${res.status}`);
+          data = jsyaml.load(await res.text());
+        } catch (e) {
+          const msg = document.createElement("p");
+          msg.className = "oc-error";
+          msg.textContent =
+            "No se pudo cargar data/org.yaml. Sirve el proyecto desde la raiz con un servidor local.";
+          wrap.appendChild(msg);
+          return;
+        }
+
+        document.title = data.meta.title;
+        document.getElementById("headerArea").textContent = data.meta.area;
+        document.getElementById("headerTeam").textContent = data.meta.team;
+
+        injectThemeStyles(data.themes);
+
+        // Root node
+        const rootNode = document.createElement("div");
+        rootNode.className = "oc-node";
+        rootNode.appendChild(makeCard(data.root));
+        wrap.appendChild(rootNode);
+
+        // Top-level columns
+        if (data.root.columns && data.root.columns.length) {
+          const cols = document.createElement("div");
+          cols.className = "oc-columns";
+          data.root.columns.forEach((col) => cols.appendChild(makeColumn(col)));
+          wrap.appendChild(cols);
+        }
+
+        updateConnectorBounds();
+        window.addEventListener("resize", updateConnectorBounds);
+      }
+
+      render();
+    </script>
+  </body>
+</html>

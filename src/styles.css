@@ -1,0 +1,307 @@
+/* ============================================================
+   Organigrama — theme-agnostic styles
+   Theme colors are injected at runtime from org.yaml via JS.
+   ============================================================ */
+
+:root {
+  --box-width: 190px;
+  --gap-columns: 16px;
+  --gap-members: 6px;
+  --connector-color: #b4b2a9;
+  --font: system-ui, -apple-system, sans-serif;
+
+  /* Header / UI chrome */
+  --header-bg:      #ffffff;
+  --header-border:  #e2e0d8;
+  --header-text:    #1a1a18;
+  --header-sub:     #6b6963;
+  --body-bg:        #f5f5f3;
+
+  /* Toggle */
+  --toggle-track-off: #d0cec6;
+  --toggle-track-on:  #534AB7;
+  --toggle-thumb:     #ffffff;
+}
+
+/* ---- Dark mode ---- */
+[data-theme="dark"] {
+  --body-bg:        #1c1c1a;
+  --header-bg:      #141412;
+  --header-border:  #2e2e2a;
+  --header-text:    #e8e6de;
+  --header-sub:     #8a8880;
+  --connector-color: #4a4845;
+  --toggle-track-off: #3a3936;
+  --toggle-thumb:     #c8c6bc;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: var(--body-bg);
+  padding: 0 0 32px;
+  font-family: var(--font);
+  transition: background 0.2s;
+}
+
+/* ---- Site header ---- */
+.site-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 24px;
+  height: 52px;
+  background: var(--header-bg);
+  border-bottom: 1px solid var(--header-border);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  transition: background 0.2s, border-color 0.2s;
+}
+
+.site-header__title {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--header-text);
+  letter-spacing: -0.01em;
+}
+
+.site-header__sep { color: var(--header-sub); font-weight: 400; }
+.site-header__team { color: var(--header-sub); font-weight: 400; }
+
+/* ---- Theme toggle ---- */
+.theme-toggle {
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+}
+
+.theme-toggle input {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.theme-toggle__track {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  width: 52px;
+  height: 26px;
+  border-radius: 13px;
+  background: var(--toggle-track-off);
+  transition: background 0.2s;
+  padding: 0 5px;
+  justify-content: space-between;
+}
+
+.theme-toggle input:checked + .theme-toggle__track {
+  background: var(--toggle-track-on);
+}
+
+.theme-toggle__thumb {
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--toggle-thumb);
+  transition: transform 0.2s, background 0.2s;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+}
+
+.theme-toggle input:checked + .theme-toggle__track .theme-toggle__thumb {
+  transform: translateX(26px);
+}
+
+.theme-toggle__icon {
+  font-size: 12px;
+  line-height: 1;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.theme-toggle__sun  { color: #c8a83a; }
+.theme-toggle__moon { color: #8a8880; }
+
+.theme-toggle input:checked + .theme-toggle__track .theme-toggle__moon {
+  color: #b0aee8;
+}
+
+/* ---- Layout ---- */
+.oc-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0;
+  padding: 32px 16px;
+}
+
+.oc-columns {
+  display: flex;
+  flex-direction: row;
+  gap: var(--gap-columns);
+  align-items: flex-start;
+  justify-content: center;
+  position: relative;
+  margin-top: 20px;
+}
+
+/* Vertical line from parent node down to the horizontal bar */
+.oc-columns::before {
+  content: '';
+  position: absolute;
+  top: -20px;
+  left: 50%;
+  width: 1px;
+  height: 20px;
+  background: var(--connector-color);
+}
+
+/* Horizontal line spanning column centers */
+.oc-columns::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: var(--line-left, calc(var(--box-width) / 2));
+  right: var(--line-right, calc(var(--box-width) / 2));
+  height: 1px;
+  background: var(--connector-color);
+}
+
+.oc-column {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0;
+}
+
+.oc-members {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap-members);
+  align-items: center;
+}
+
+/* ---- Connectors ---- */
+.oc-vline.short {
+  width: 1px;
+  height: 16px;
+  background: var(--connector-color);
+}
+
+.oc-stem {
+  width: 1px;
+  height: 20px;
+  background: var(--connector-color);
+  margin: 0 auto;
+}
+
+/* ---- Boxes ---- */
+.oc-box {
+  width: var(--box-width);
+  border-radius: 8px;
+  overflow: hidden;
+  text-align: center;
+  position: relative;
+}
+
+/* Theme-driven colors — variables set per [data-ct] by the JS renderer */
+.oc-box .name {
+  font-weight: 500;
+  font-size: 12px;
+  padding: 7px 10px 4px;
+  line-height: 1.4;
+  background: var(--t-hd-bg);
+  color: var(--t-hd-text);
+  border: 0.5px var(--t-border-style, solid) var(--t-name-border, transparent);
+  border-bottom: none;
+  border-radius: 8px 8px 0 0;
+}
+
+.oc-box .role {
+  font-size: 11px;
+  padding: 0 10px 2px;
+  line-height: 1.4;
+  background: var(--t-bd-bg);
+  color: var(--t-bd-text);
+  border: 0.5px var(--t-border-style, solid) var(--t-border);
+  border-top: none;
+  border-bottom: none;
+}
+
+.oc-box .func {
+  font-size: 10px;
+  font-style: italic;
+  padding: 2px 10px 7px;
+  line-height: 1.4;
+  background: var(--t-bd-bg);
+  color: var(--t-bd-text);
+  border: 0.5px var(--t-border-style, solid) var(--t-border);
+  border-top: none;
+  border-radius: 0 0 8px 8px;
+}
+
+/* ---- Badge E ---- */
+.badge-e {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  width: 14px;
+  height: 14px;
+  background: #C8C6BC;
+  color: #5F5E5A;
+  border-radius: 50%;
+  font-size: 8px;
+  font-weight: 700;
+  font-style: normal;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1;
+}
+
+/* ---- Badge NEW ---- */
+.badge-new {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  height: 14px;
+  padding: 0 4px;
+  background: #E07020;
+  color: #ffffff;
+  border-radius: 4px;
+  font-size: 7px;
+  font-weight: 700;
+  font-style: normal;
+  letter-spacing: 0.03em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1;
+}
+
+/* ---- Emoji marker ---- */
+.badge-emoji {
+  position: absolute;
+  top: 2px;
+  right: 4px;
+  background: transparent;
+  font-size: 14px;
+  font-style: normal;
+  line-height: 1;
+  z-index: 1;
+}
+
+/* ---- Error state ---- */
+.oc-error {
+  padding: 32px;
+  color: var(--header-sub);
+  font-size: 13px;
+  font-family: var(--font);
+}

@@ -1,0 +1,209 @@
+meta:
+  title: "Organigrama · Automation & Monitoring"
+  area: "Infrastructure and Operations"
+  team: "Automation & Monitoring"
+
+# Color themes. Each theme defines header (name row) and body (role/func rows) colors.
+# name_border: true  → adds a visible border around the name row (flat-style cards like miembro/vacante)
+# dashed: true       → uses dashed borders everywhere (vacante style)
+# dark:              → optional overrides when [data-theme="dark"] is active
+themes:
+  purple:
+    header_bg: "#534AB7"
+    header_text: "#EEEDFE"
+    body_bg: "#EEEDFE"
+    body_text: "#3C3489"
+    border: "#AFA9EC"
+
+  green:
+    header_bg: "#0F6E56"
+    header_text: "#E1F5EE"
+    body_bg: "#E1F5EE"
+    body_text: "#085041"
+    border: "#9FE1CB"
+
+  brown:
+    header_bg: "#854F0B"
+    header_text: "#FAEEDA"
+    body_bg: "#FAEEDA"
+    body_text: "#633806"
+    border: "#FAC775"
+
+  blue:
+    header_bg: "#0E5F6B"
+    header_text: "#DDF4F7"
+    body_bg: "#DDF4F7"
+    body_text: "#0A444E"
+    border: "#8DDDE8"
+
+  miembro:
+    header_bg: "#F1EFE8"
+    header_text: "#444441"
+    body_bg: "#ffffff"
+    body_text: "#5F5E5A"
+    border: "#D3D1C7"
+    name_border: true
+    dark:
+      header_bg: "#2a2a27"
+      header_text: "#c8c6bc"
+      body_bg: "#222220"
+      body_text: "#8a8880"
+      border: "#3e3d39"
+
+  vacante:
+    header_bg: "#ffffff"
+    header_text: "#888780"
+    body_bg: "#ffffff"
+    body_text: "#888780"
+    border: "#B4B2A9"
+    name_border: true
+    dashed: true
+    dark:
+      header_bg: "#222220"
+      header_text: "#606058"
+      body_bg: "#222220"
+      body_text: "#606058"
+      border: "#3a3936"
+
+# Org chart tree.
+#
+# Each node: name, role, func, theme (key into themes above)
+#            badge (optional string — "E" renders a grey circle, "NEW" renders an orange pill)
+#            emoji (optional string — rendered without background in top-right corner)
+#            if both badge and emoji are defined, badge takes precedence
+#
+# A node may have:
+#   members: list of nodes stacked vertically below it (with a short connector line)
+#   columns: list of sub-column descriptors rendered side-by-side
+#
+# A columns entry may omit name/role/func/theme to create an anonymous column
+# (only members, no header card). Presence of `name` = there is a header card.
+
+root:
+  name: "William Añez"
+  role: "Tech Director"
+  func: "Automation & Monitoring"
+  theme: purple
+  columns:
+    - name: "María del Carmen Allones"
+      role: "Platform Owner Team Lead"
+      func: "Automation | Goliath"
+      theme: blue
+      members:
+        - name: "Alexis I. Zapata"
+          role: "Full Stack Software Eng."
+          func: "Automation"
+          theme: miembro
+        - name: "Alfredo G. Araya"
+          role: "IT Specialist"
+          func: "Automation"
+          theme: miembro
+        - name: "Benjamín E. Peñaloza"
+          role: "IT Specialist"
+          func: "Automation"
+          theme: miembro
+        - name: "Jose M. González"
+          role: "Process Engineer"
+          func: "Automation"
+          theme: miembro
+        - name: "Nelson J. Castillo"
+          role: "Process Engineer"
+          func: "Automation"
+          theme: miembro
+        - name: "Samuel A. Hernandez"
+          role: "Senior DevOps Engineer"
+          func: "Cross"
+          theme: miembro
+        - name: "TBD"
+          role: "Seniorr Fullstack Engineer"
+          func: "AiudA"
+          theme: vacante
+          badge: "NEW"
+
+    - name: "Manuel Alejandro Calderon"
+      role: "Platform Owner Team Lead"
+      func: "Automation | Networking"
+      theme: blue
+      members:
+        - name: "Agustin Emanuel Tupilojon"
+          role: "Senior Process Engineer"
+          func: "Automation"
+          theme: miembro
+          emoji: "⭐️"
+        - name: "Carlos Ivan Danieri"
+          role: "Process Engineer"
+          func: "Automation"
+          theme: miembro
+        - name: "Felipe Patricio Pavez"
+          role: "Process Engineer"
+          func: "Automation"
+          theme: miembro
+        - name: "Miguel Angel Ortiz"
+          role: "Senior Devops Engineer"
+          func: "Cross"
+          theme: miembro
+
+    - name: "Henry Hormaza"
+      role: "Principal Software Engineer"
+      func: "Platform"
+      theme: brown
+
+    - name: "Eduardo Alarcon"
+      role: "Tech Manager"
+      func: "AiudA & Monitoreo"
+      theme: blue
+      columns:
+        - members:
+            - name: "Martín Saavedra"
+              role: "Developer Boot"
+              func: "AiudA"
+              theme: miembro
+              badge: "E"
+            - name: "TBD"
+              role: "Seniorr Fullstack Engineer"
+              func: "AiudA"
+              theme: vacante
+              badge: "NEW"
+            - name: "TBD"
+              role: "Senior Fullstack Engineer"
+              func: "AiudA"
+              theme: vacante
+              badge: "NEW"
+
+        - name: "Germán H. Millán Leal"
+          role: "Platform Owner Team Lead"
+          func: "Monitoreo | ARMOR"
+          theme: green
+          members:
+            - name: "Rodolfo Vásquez"
+              role: "IT Specialist"
+              func: "Observability"
+              theme: miembro
+            - name: "Eduardo Chavero"
+              role: "IT Specialist"
+              func: "Observability"
+              theme: miembro
+            - name: "María S. Calvo"
+              role: "IT Specialist"
+              func: "Observability"
+              theme: miembro
+            - name: "Christian Mendoza"
+              role: "Developer Obs. Frontend"
+              func: "ARMOR"
+              theme: miembro
+              badge: "E"
+            - name: "Diego Hormazábal"
+              role: "L2 AppDynamics"
+              func: "Monitoring"
+              theme: miembro
+              badge: "E"
+            - name: "Juan Barrera"
+              role: "L2 Nagios"
+              func: "Monitoring"
+              theme: miembro
+              badge: "E"
+            - name: "TBD"
+              role: "IT Specialist"
+              func: "Observability"
+              theme: vacante
+              badge: "E"
