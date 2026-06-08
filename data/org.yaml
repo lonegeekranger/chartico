@@ -4,8 +4,8 @@ meta:
   team: "Automation & Monitoring"
 
 # Color themes. Each theme defines header (name row) and body (role/func rows) colors.
-# name_border: true  → adds a visible border around the name row (flat-style cards like miembro/vacante)
-# dashed: true       → uses dashed borders everywhere (vacante style)
+# name_border: true  → adds a visible border around the name row (flat-style cards like gray/tbd)
+# dashed: true       → uses dashed borders everywhere (tbd style)
 # dark:              → optional overrides when [data-theme="dark"] is active
 themes:
   purple:
@@ -14,6 +14,13 @@ themes:
     body_bg: "#EEEDFE"
     body_text: "#3C3489"
     border: "#AFA9EC"
+
+  navy:
+    header_bg: "#1F2A44"
+    header_text: "#F5F8FF"
+    body_bg: "#EAF0FF"
+    body_text: "#22314D"
+    border: "#9FB0D9"
 
   green:
     header_bg: "#0F6E56"
@@ -29,6 +36,13 @@ themes:
     body_text: "#633806"
     border: "#FAC775"
 
+  yellow:
+    header_bg: "#B7791F"
+    header_text: "#FFF8E1"
+    body_bg: "#FFF8E1"
+    body_text: "#7A4E0A"
+    border: "#F2C066"
+
   blue:
     header_bg: "#0E5F6B"
     header_text: "#DDF4F7"
@@ -36,7 +50,7 @@ themes:
     body_text: "#0A444E"
     border: "#8DDDE8"
 
-  miembro:
+  gray:
     header_bg: "#F1EFE8"
     header_text: "#444441"
     body_bg: "#ffffff"
@@ -50,7 +64,7 @@ themes:
       body_text: "#8a8880"
       border: "#3e3d39"
 
-  vacante:
+  tbd:
     header_bg: "#ffffff"
     header_text: "#888780"
     body_bg: "#ffffff"
@@ -83,41 +97,41 @@ root:
   name: "William Añez"
   role: "Tech Director"
   func: "Automation & Monitoring"
-  theme: purple
+  theme: navy
   columns:
     - name: "María del Carmen Allones"
       role: "Platform Owner Team Lead"
       func: "Automation | Goliath"
-      theme: blue
+      theme: yellow
       members:
         - name: "Alexis I. Zapata"
           role: "Full Stack Software Eng."
           func: "Automation"
-          theme: miembro
+          theme: gray
         - name: "Alfredo G. Araya"
           role: "IT Specialist"
           func: "Automation"
-          theme: miembro
+          theme: gray
         - name: "Benjamín E. Peñaloza"
           role: "IT Specialist"
           func: "Automation"
-          theme: miembro
+          theme: gray
         - name: "Jose M. González"
           role: "Process Engineer"
           func: "Automation"
-          theme: miembro
+          theme: gray
         - name: "Nelson J. Castillo"
           role: "Process Engineer"
           func: "Automation"
-          theme: miembro
+          theme: gray
         - name: "Samuel A. Hernandez"
           role: "Senior DevOps Engineer"
           func: "Cross"
-          theme: miembro
+          theme: gray
         - name: "TBD"
           role: "Seniorr Fullstack Engineer"
           func: "AiudA"
-          theme: vacante
+          theme: tbd
           badge: "NEW"
 
     - name: "Manuel Alejandro Calderon"
@@ -128,46 +142,46 @@ root:
         - name: "Agustin Emanuel Tupilojon"
           role: "Senior Process Engineer"
           func: "Automation"
-          theme: miembro
+          theme: gray
           emoji: "⭐️"
         - name: "Carlos Ivan Danieri"
           role: "Process Engineer"
           func: "Automation"
-          theme: miembro
+          theme: gray
         - name: "Felipe Patricio Pavez"
           role: "Process Engineer"
           func: "Automation"
-          theme: miembro
+          theme: gray
         - name: "Miguel Angel Ortiz"
           role: "Senior Devops Engineer"
           func: "Cross"
-          theme: miembro
+          theme: gray
 
     - name: "Henry Hormaza"
       role: "Principal Software Engineer"
-      func: "Platform"
+      func: "Automation | AiudA"
       theme: brown
 
     - name: "Eduardo Alarcon"
       role: "Tech Manager"
-      func: "AiudA & Monitoreo"
-      theme: blue
+      func: "AI Ecosystem & Monitoreo"
+      theme: green
       columns:
         - members:
             - name: "Martín Saavedra"
               role: "Developer Boot"
               func: "AiudA"
-              theme: miembro
+              theme: gray
               badge: "E"
             - name: "TBD"
               role: "Seniorr Fullstack Engineer"
               func: "AiudA"
-              theme: vacante
+              theme: tbd
               badge: "NEW"
             - name: "TBD"
               role: "Senior Fullstack Engineer"
               func: "AiudA"
-              theme: vacante
+              theme: tbd
               badge: "NEW"
 
         - name: "Germán H. Millán Leal"
@@ -178,32 +192,32 @@ root:
             - name: "Rodolfo Vásquez"
               role: "IT Specialist"
               func: "Observability"
-              theme: miembro
+              theme: gray
             - name: "Eduardo Chavero"
               role: "IT Specialist"
               func: "Observability"
-              theme: miembro
-            - name: "María S. Calvo"
-              role: "IT Specialist"
+              theme: gray
+            - name: "María Soledad Calvo"
+              role: "Platform Owner"
               func: "Observability"
-              theme: miembro
+              theme: yellow
             - name: "Christian Mendoza"
               role: "Developer Obs. Frontend"
               func: "ARMOR"
-              theme: miembro
+              theme: gray
               badge: "E"
             - name: "Diego Hormazábal"
               role: "L2 AppDynamics"
               func: "Monitoring"
-              theme: miembro
+              theme: gray
               badge: "E"
             - name: "Juan Barrera"
               role: "L2 Nagios"
               func: "Monitoring"
-              theme: miembro
+              theme: gray
               badge: "E"
             - name: "TBD"
               role: "IT Specialist"
               func: "Observability"
-              theme: vacante
+              theme: tbd
               badge: "E"
