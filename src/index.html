@@ -13,6 +13,10 @@
             ? "dark"
             : "light");
         document.documentElement.setAttribute("data-theme", saved);
+        document.documentElement.setAttribute(
+          "data-hide-externos",
+          localStorage.getItem("hideExternos") === "1" ? "true" : "false",
+        );
       })();
     </script>
   </head>
@@ -23,14 +27,24 @@
         <span class="site-header__sep">:</span>
         <span class="site-header__team" id="headerTeam"></span>
       </div>
-      <label class="theme-toggle" title="Toggle theme">
-        <input type="checkbox" id="themeCheck" />
-        <span class="theme-toggle__track">
-          <span class="theme-toggle__icon theme-toggle__sun">&#9728;</span>
-          <span class="theme-toggle__icon theme-toggle__moon">&#9790;</span>
-          <span class="theme-toggle__thumb"></span>
-        </span>
-      </label>
+      <div class="site-header__controls">
+        <label class="toggle-switch theme-toggle" title="Cambiar tema">
+          <input type="checkbox" id="themeCheck" />
+          <span class="toggle-switch__track">
+            <span class="toggle-switch__icon theme-toggle__sun">&#9728;</span>
+            <span class="toggle-switch__icon theme-toggle__moon">&#9790;</span>
+            <span class="toggle-switch__thumb"></span>
+          </span>
+        </label>
+        <label class="toggle-switch externos-toggle" title="Mostrar/ocultar externos">
+          <input type="checkbox" id="externosCheck" />
+          <span class="toggle-switch__track">
+            <span class="toggle-switch__icon externos-toggle__eye">&#128065;</span>
+            <span class="toggle-switch__icon externos-toggle__eye-off">&#128584;</span>
+            <span class="toggle-switch__thumb"></span>
+          </span>
+        </label>
+      </div>
     </header>
 
     <script>
@@ -46,6 +60,24 @@
           const theme = this.checked ? "dark" : "light";
           document.documentElement.setAttribute("data-theme", theme);
           localStorage.setItem("theme", theme);
+        });
+      })();
+
+      (function () {
+        const check = document.getElementById("externosCheck");
+        const hidden = localStorage.getItem("hideExternos") === "1";
+        check.checked = hidden;
+        check.addEventListener("change", function () {
+          document.documentElement.setAttribute(
+            "data-hide-externos",
+            this.checked ? "true" : "false",
+          );
+          localStorage.setItem("hideExternos", this.checked ? "1" : "0");
+          // Hiding/showing cards changes column widths, so the connector
+          // bars (drawn from the first/last stem's center) need a redraw.
+          if (typeof updateConnectorBounds === "function") {
+            updateConnectorBounds();
+          }
         });
       })();
     </script>
@@ -97,10 +129,20 @@
       }
 
       // Build a single card element from a node descriptor.
-      function makeCard(node) {
+      // `level` is the depth of this node within the org chart (root's explicit
+      // "level" tag, incremented by 1 for each generation below it).
+      function makeCard(node, level) {
         const box = document.createElement("div");
         box.className = "oc-box";
         box.dataset.ct = node.theme;
+        if (node.badge === "E") box.dataset.external = "true";
+
+        if (level !== undefined) {
+          const levelBadge = document.createElement("span");
+          levelBadge.className = "oc-level";
+          levelBadge.textContent = level;
+          box.appendChild(levelBadge);
+        }
 
         ["name", "role", "func"].forEach((field) => {
           const el = document.createElement("div");
@@ -124,9 +166,28 @@
         return box;
       }
 
+      // A `columns` array with a single anonymous entry doesn't fan out to
+      // anything — it's a no-op wrapper. Collapse it so its members/columns
+      // become the current node's own, avoiding a redundant connector segment.
+      function collapseSingleAnonymousWrap(col) {
+        while (
+          col.columns &&
+          col.columns.length === 1 &&
+          col.columns[0].name === undefined
+        ) {
+          const inner = col.columns[0];
+          col = { ...col, columns: inner.columns, members: inner.members };
+        }
+        return col;
+      }
+
       // Build a column element from a column descriptor.
       // A descriptor with `name` renders a header card; without `name` it's anonymous (members only).
-      function makeColumn(col) {
+      // `level` is this column's depth in the org chart. An anonymous column doesn't
+      // represent a real position, so it doesn't consume a level on its own — its
+      // members sit at the same level the column itself was assigned.
+      function makeColumn(col, level) {
+        col = collapseSingleAnonymousWrap(col);
         const column = document.createElement("div");
         column.className = "oc-column";
 
@@ -136,13 +197,17 @@
 
         const hasHeader = col.name !== undefined;
         if (hasHeader) {
-          column.appendChild(makeCard(col));
+          column.appendChild(makeCard(col, level));
         }
+
+        const childLevel = hasHeader ? level + 1 : level;
 
         if (col.columns && col.columns.length) {
           const subCols = document.createElement("div");
           subCols.className = "oc-columns";
-          col.columns.forEach((sub) => subCols.appendChild(makeColumn(sub)));
+          col.columns.forEach((sub) =>
+            subCols.appendChild(makeColumn(sub, childLevel)),
+          );
           column.appendChild(subCols);
         } else if (col.members && col.members.length) {
           if (hasHeader) {
@@ -150,10 +215,31 @@
             vline.className = "oc-vline short";
             column.appendChild(vline);
           }
-          const members = document.createElement("div");
-          members.className = "oc-members";
-          col.members.forEach((m) => members.appendChild(makeCard(m)));
-          column.appendChild(members);
+
+          const MAX_PER_COLUMN = 4;
+          if (col.members.length > MAX_PER_COLUMN) {
+            // More than 4 dependents: split into as many 4-tall columns as
+            // needed and center them under the parent, like a sub-columns row.
+            const chunks = [];
+            for (let i = 0; i < col.members.length; i += MAX_PER_COLUMN) {
+              chunks.push(col.members.slice(i, i + MAX_PER_COLUMN));
+            }
+            const memberCols = document.createElement("div");
+            memberCols.className = "oc-columns";
+            chunks.forEach((chunk) =>
+              memberCols.appendChild(
+                makeColumn({ members: chunk }, childLevel),
+              ),
+            );
+            column.appendChild(memberCols);
+          } else {
+            const members = document.createElement("div");
+            members.className = "oc-members";
+            col.members.forEach((m) =>
+              members.appendChild(makeCard(m, childLevel)),
+            );
+            column.appendChild(members);
+          }
         }
 
         return column;
@@ -162,8 +248,9 @@
       // Align each horizontal connector to the exact center of the first and last child stems.
       function updateConnectorBounds() {
         document.querySelectorAll(".oc-columns").forEach((cols) => {
-          const columns = Array.from(cols.children).filter((el) =>
-            el.classList.contains("oc-column"),
+          const columns = Array.from(cols.children).filter(
+            (el) =>
+              el.classList.contains("oc-column") && el.offsetParent !== null,
           );
           if (!columns.length) return;
 
@@ -206,17 +293,20 @@
 
         injectThemeStyles(data.themes);
 
-        // Root node
+        // Root node — "level" in org.yaml is the starting depth for the whole chart.
+        const rootLevel = data.root.level;
         const rootNode = document.createElement("div");
         rootNode.className = "oc-node";
-        rootNode.appendChild(makeCard(data.root));
+        rootNode.appendChild(makeCard(data.root, rootLevel));
         wrap.appendChild(rootNode);
 
         // Top-level columns
         if (data.root.columns && data.root.columns.length) {
           const cols = document.createElement("div");
           cols.className = "oc-columns";
-          data.root.columns.forEach((col) => cols.appendChild(makeColumn(col)));
+          data.root.columns.forEach((col) =>
+            cols.appendChild(makeColumn(col, rootLevel + 1)),
+          );
           wrap.appendChild(cols);
         }
 

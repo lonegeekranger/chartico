@@ -97,11 +97,12 @@ root:
   name: "William Añez"
   role: "Tech Director"
   func: "Automation & Monitoring"
+  level: 3
   theme: navy
   columns:
     - name: "María del Carmen Allones"
       role: "Platform Owner Team Lead"
-      func: "Automation | Goliath"
+      func: "Automation & AiudA"
       theme: yellow
       members:
         - name: "Alexis I. Zapata"
@@ -117,107 +118,96 @@ root:
           func: "Automation"
           theme: gray
         - name: "Jose M. González"
-          role: "Process Engineer"
+          role: "Process Owner"
           func: "Automation"
           theme: gray
         - name: "Nelson J. Castillo"
-          role: "Process Engineer"
+          role: "Process Owner"
           func: "Automation"
           theme: gray
         - name: "Samuel A. Hernandez"
-          role: "Senior DevOps Engineer"
+          role: "Principal FS Engineer"
           func: "Cross"
           theme: gray
         - name: "TBD"
-          role: "Seniorr Fullstack Engineer"
+          role: "Senior Fullstack Engineer"
+          func: "AiudA"
+          theme: tbd
+          badge: "NEW"
+        - name: "TBD"
+          role: "Senior Fullstack Engineer"
           func: "AiudA"
           theme: tbd
           badge: "NEW"
 
-    - name: "Manuel Alejandro Calderon"
-      role: "Platform Owner Team Lead"
-      func: "Automation | Networking"
-      theme: blue
-      members:
-        - name: "Agustin Emanuel Tupilojon"
-          role: "Senior Process Engineer"
-          func: "Automation"
-          theme: gray
-          emoji: "⭐️"
-        - name: "Carlos Ivan Danieri"
-          role: "Process Engineer"
-          func: "Automation"
-          theme: gray
-        - name: "Felipe Patricio Pavez"
-          role: "Process Engineer"
-          func: "Automation"
-          theme: gray
-        - name: "Miguel Angel Ortiz"
-          role: "Senior Devops Engineer"
-          func: "Cross"
-          theme: gray
-
     - name: "Henry Hormaza"
-      role: "Principal Software Engineer"
-      func: "Automation | AiudA"
+      role: "Principal Platform Owner"
+      func: "Automation Backend"
       theme: brown
 
     - name: "Eduardo Alarcon"
       role: "Tech Manager"
-      func: "AI Ecosystem & Monitoreo"
+      func: "Monitoring & AI"
       theme: green
-      columns:
-        - members:
-            - name: "Martín Saavedra"
-              role: "Developer Boot"
-              func: "AiudA"
-              theme: gray
-              badge: "E"
-            - name: "TBD"
-              role: "Seniorr Fullstack Engineer"
-              func: "AiudA"
-              theme: tbd
-              badge: "NEW"
-            - name: "TBD"
-              role: "Senior Fullstack Engineer"
-              func: "AiudA"
-              theme: tbd
-              badge: "NEW"
-
+      members:
         - name: "Germán H. Millán Leal"
           role: "Platform Owner Team Lead"
-          func: "Monitoreo | ARMOR"
-          theme: green
-          members:
-            - name: "Rodolfo Vásquez"
-              role: "IT Specialist"
-              func: "Observability"
-              theme: gray
-            - name: "Eduardo Chavero"
-              role: "IT Specialist"
-              func: "Observability"
-              theme: gray
-            - name: "María Soledad Calvo"
-              role: "Platform Owner"
-              func: "Observability"
-              theme: yellow
-            - name: "Christian Mendoza"
-              role: "Developer Obs. Frontend"
-              func: "ARMOR"
-              theme: gray
-              badge: "E"
-            - name: "Diego Hormazábal"
-              role: "L2 AppDynamics"
-              func: "Monitoring"
-              theme: gray
-              badge: "E"
-            - name: "Juan Barrera"
-              role: "L2 Nagios"
-              func: "Monitoring"
-              theme: gray
-              badge: "E"
-            - name: "TBD"
-              role: "IT Specialist"
-              func: "Observability"
-              theme: tbd
-              badge: "E"
+          func: "Observability"
+          theme: gray
+        - name: "Rodolfo Vásquez"
+          role: "IT Specialist"
+          func: "Observability"
+          theme: gray
+        - name: "Eduardo Chavero"
+          role: "IT Specialist"
+          func: "Observability"
+          theme: gray
+        - name: "María Soledad Calvo"
+          role: "Platform Owner"
+          func: "Observability"
+          theme: gray
+        - name: "TBD"
+          role: "Senior Fullstack Engineer"
+          func: "AI Development"
+          theme: tbd
+          badge: "NEW"
+        - name: "TBD"
+          role: "Senior Fullstack Engineer"
+          func: "AI Development"
+          theme: tbd
+          badge: "NEW"
+        - name: "TBD"
+          role: "Senior Fullstack Engineer"
+          func: "Observability"
+          theme: tbd
+          badge: "NEW"
+        - name: "TBD"
+          role: "Senior Fullstack Engineer"
+          func: "Observability"
+          theme: tbd
+          badge: "NEW"
+        - name: "Christian Mendoza"
+          role: "Development"
+          func: "Observability"
+          theme: gray
+          badge: "E"
+        - name: "Diego Hormazábal"
+          role: "L2 AppDynamics"
+          func: "Observability"
+          theme: gray
+          badge: "E"
+        - name: "Juan Barrera"
+          role: "L2 Nagios"
+          func: "Observability"
+          theme: gray
+          badge: "E"
+        - name: "Bastian Chavez"
+          role: "Consultor"
+          func: "AiudA"
+          theme: gray
+          badge: "E"
+        - name: "Guillermo Vidal"
+          role: "Consultor"
+          func: "Observability"
+          theme: gray
+          badge: "E"

@@ -72,21 +72,28 @@ body {
 .site-header__sep { color: var(--header-sub); font-weight: 400; }
 .site-header__team { color: var(--header-sub); font-weight: 400; }
 
-/* ---- Theme toggle ---- */
-.theme-toggle {
+/* ---- Header controls (theme / externos toggles) ---- */
+.site-header__controls {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+/* ---- Generic toggle switch ---- */
+.toggle-switch {
   cursor: pointer;
   display: inline-flex;
   align-items: center;
 }
 
-.theme-toggle input {
+.toggle-switch input {
   position: absolute;
   opacity: 0;
   width: 0;
   height: 0;
 }
 
-.theme-toggle__track {
+.toggle-switch__track {
   position: relative;
   display: inline-flex;
   align-items: center;
@@ -99,11 +106,11 @@ body {
   justify-content: space-between;
 }
 
-.theme-toggle input:checked + .theme-toggle__track {
+.toggle-switch input:checked + .toggle-switch__track {
   background: var(--toggle-track-on);
 }
 
-.theme-toggle__thumb {
+.toggle-switch__thumb {
   position: absolute;
   top: 3px;
   left: 3px;
@@ -115,22 +122,31 @@ body {
   box-shadow: 0 1px 3px rgba(0,0,0,0.2);
 }
 
-.theme-toggle input:checked + .theme-toggle__track .theme-toggle__thumb {
+.toggle-switch input:checked + .toggle-switch__track .toggle-switch__thumb {
   transform: translateX(26px);
 }
 
-.theme-toggle__icon {
+.toggle-switch__icon {
   font-size: 12px;
   line-height: 1;
   z-index: 1;
   pointer-events: none;
 }
 
+/* Theme toggle icon colors */
 .theme-toggle__sun  { color: #c8a83a; }
 .theme-toggle__moon { color: #8a8880; }
 
-.theme-toggle input:checked + .theme-toggle__track .theme-toggle__moon {
+.theme-toggle input:checked + .toggle-switch__track .theme-toggle__moon {
   color: #b0aee8;
+}
+
+/* Externos toggle icon colors */
+.externos-toggle__eye     { color: #8a8880; }
+.externos-toggle__eye-off { color: #8a8880; }
+
+.externos-toggle input:checked + .toggle-switch__track .externos-toggle__eye-off {
+  color: #e0704a;
 }
 
 /* ---- Layout ---- */
@@ -247,6 +263,25 @@ body {
   border-radius: 0 0 8px 8px;
 }
 
+/* ---- Level badge ---- */
+.oc-level {
+  position: absolute;
+  top: 4px;
+  left: 4px;
+  width: 14px;
+  height: 14px;
+  background: rgba(127, 127, 127, 0.25);
+  color: var(--t-hd-text);
+  border-radius: 50%;
+  font-size: 8px;
+  font-weight: 700;
+  font-style: normal;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1;
+}
+
 /* ---- Badge E ---- */
 .badge-e {
   position: absolute;
@@ -296,6 +331,17 @@ body {
   font-style: normal;
   line-height: 1;
   z-index: 1;
+}
+
+/* ---- Externos visibility ---- */
+[data-hide-externos="true"] .oc-box[data-external="true"] {
+  display: none;
+}
+
+/* A column whose every card is external collapses entirely (stem included)
+   instead of leaving a dangling connector line with no boxes under it. */
+[data-hide-externos="true"] .oc-column:not(:has(.oc-box:not([data-external="true"]))) {
+  display: none;
 }
 
 /* ---- Error state ---- */
