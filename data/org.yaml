@@ -24,7 +24,7 @@ root:
   role: "Tech Director"
   func: "Automation & Monitoring"
   level: 3
-  theme: teal
+  theme: navy
   columns:
     - name: "María del Carmen Allones"
       role: "Platform Owner Team Lead"
