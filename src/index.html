@@ -128,6 +128,29 @@
         document.head.appendChild(style);
       }
 
+      // Counts direct and total internal (non-external) reports under a node.
+      // Anonymous columns (no `name`) aren't people — their children count as
+      // if they were this node's own, same as the level-numbering rule above.
+      // External reports (badge "E") and their whole subtree are ignored.
+      function countReports(node) {
+        const childArray = node.columns || node.members || [];
+        let direct = 0;
+        let total = 0;
+        childArray.forEach((child) => {
+          if (child.name === undefined) {
+            const sub = countReports(child);
+            direct += sub.direct;
+            total += sub.total;
+            return;
+          }
+          if (child.badge === "E") return;
+          direct += 1;
+          total += 1;
+          total += countReports(child).total;
+        });
+        return { direct, total };
+      }
+
       // Build a single card element from a node descriptor.
       // `level` is the depth of this node within the org chart (root's explicit
       // "level" tag, incremented by 1 for each generation below it).
@@ -150,6 +173,16 @@
           el.textContent = node[field];
           box.appendChild(el);
         });
+
+        const childArray = node.columns || node.members;
+        if (childArray && childArray.length) {
+          box.querySelector(".func").classList.add("func--has-reports");
+          const { direct, total } = countReports(node);
+          const reports = document.createElement("div");
+          reports.className = "reports";
+          reports.textContent = `${direct}/${total}`;
+          box.appendChild(reports);
+        }
 
         if (node.badge) {
           const badge = document.createElement("span");
@@ -272,17 +305,22 @@
 
       async function render() {
         const wrap = document.getElementById("oc-wrap");
-        let data;
+        let data, themes;
 
         try {
-          const res = await fetch("../data/org.yaml");
-          if (!res.ok) throw new Error(`HTTP ${res.status}`);
-          data = jsyaml.load(await res.text());
+          const [orgRes, themesRes] = await Promise.all([
+            fetch("../data/org.yaml"),
+            fetch("../data/themes.yaml"),
+          ]);
+          if (!orgRes.ok) throw new Error(`HTTP ${orgRes.status}`);
+          if (!themesRes.ok) throw new Error(`HTTP ${themesRes.status}`);
+          data = jsyaml.load(await orgRes.text());
+          themes = jsyaml.load(await themesRes.text()).themes;
         } catch (e) {
           const msg = document.createElement("p");
           msg.className = "oc-error";
           msg.textContent =
-            "No se pudo cargar data/org.yaml. Sirve el proyecto desde la raiz con un servidor local.";
+            "No se pudo cargar data/org.yaml o data/themes.yaml. Sirve el proyecto desde la raiz con un servidor local.";
           wrap.appendChild(msg);
           return;
         }
@@ -291,7 +329,7 @@
         document.getElementById("headerArea").textContent = data.meta.area;
         document.getElementById("headerTeam").textContent = data.meta.team;
 
-        injectThemeStyles(data.themes);
+        injectThemeStyles(themes);
 
         // Root node — "level" in org.yaml is the starting depth for the whole chart.
         const rootLevel = data.root.level;

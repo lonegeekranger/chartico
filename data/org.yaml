@@ -3,81 +3,7 @@ meta:
   area: "Infrastructure and Operations"
   team: "Automation & Monitoring"
 
-# Color themes. Each theme defines header (name row) and body (role/func rows) colors.
-# name_border: true  → adds a visible border around the name row (flat-style cards like gray/tbd)
-# dashed: true       → uses dashed borders everywhere (tbd style)
-# dark:              → optional overrides when [data-theme="dark"] is active
-themes:
-  purple:
-    header_bg: "#534AB7"
-    header_text: "#EEEDFE"
-    body_bg: "#EEEDFE"
-    body_text: "#3C3489"
-    border: "#AFA9EC"
-
-  navy:
-    header_bg: "#1F2A44"
-    header_text: "#F5F8FF"
-    body_bg: "#EAF0FF"
-    body_text: "#22314D"
-    border: "#9FB0D9"
-
-  green:
-    header_bg: "#0F6E56"
-    header_text: "#E1F5EE"
-    body_bg: "#E1F5EE"
-    body_text: "#085041"
-    border: "#9FE1CB"
-
-  brown:
-    header_bg: "#854F0B"
-    header_text: "#FAEEDA"
-    body_bg: "#FAEEDA"
-    body_text: "#633806"
-    border: "#FAC775"
-
-  yellow:
-    header_bg: "#B7791F"
-    header_text: "#FFF8E1"
-    body_bg: "#FFF8E1"
-    body_text: "#7A4E0A"
-    border: "#F2C066"
-
-  blue:
-    header_bg: "#0E5F6B"
-    header_text: "#DDF4F7"
-    body_bg: "#DDF4F7"
-    body_text: "#0A444E"
-    border: "#8DDDE8"
-
-  gray:
-    header_bg: "#F1EFE8"
-    header_text: "#444441"
-    body_bg: "#ffffff"
-    body_text: "#5F5E5A"
-    border: "#D3D1C7"
-    name_border: true
-    dark:
-      header_bg: "#2a2a27"
-      header_text: "#c8c6bc"
-      body_bg: "#222220"
-      body_text: "#8a8880"
-      border: "#3e3d39"
-
-  tbd:
-    header_bg: "#ffffff"
-    header_text: "#888780"
-    body_bg: "#ffffff"
-    body_text: "#888780"
-    border: "#B4B2A9"
-    name_border: true
-    dashed: true
-    dark:
-      header_bg: "#222220"
-      header_text: "#606058"
-      body_bg: "#222220"
-      body_text: "#606058"
-      border: "#3a3936"
+# Color themes live in themes.yaml (key referenced by each node's `theme` field).
 
 # Org chart tree.
 #
@@ -98,12 +24,12 @@ root:
   role: "Tech Director"
   func: "Automation & Monitoring"
   level: 3
-  theme: navy
+  theme: teal
   columns:
     - name: "María del Carmen Allones"
       role: "Platform Owner Team Lead"
       func: "Automation & AiudA"
-      theme: yellow
+      theme: pink
       members:
         - name: "Alexis I. Zapata"
           role: "Full Stack Software Eng."
@@ -134,21 +60,16 @@ root:
           func: "AiudA"
           theme: tbd
           badge: "NEW"
-        - name: "TBD"
-          role: "Senior Fullstack Engineer"
-          func: "AiudA"
-          theme: tbd
-          badge: "NEW"
 
     - name: "Henry Hormaza"
       role: "Principal Platform Owner"
       func: "Automation Backend"
-      theme: brown
+      theme: gray
 
     - name: "Eduardo Alarcon"
       role: "Tech Manager"
       func: "Monitoring & AI"
-      theme: green
+      theme: coral
       members:
         - name: "Germán H. Millán Leal"
           role: "Platform Owner Team Lead"

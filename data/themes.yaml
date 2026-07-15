@@ -1,0 +1,113 @@
+# Color themes. Each theme defines header (name row) and body (role/func rows) colors.
+# name_border: true  → adds a visible border around the name row (flat-style cards like gray/tbd)
+# dashed: true       → uses dashed borders everywhere (tbd style)
+# dark:              → optional overrides when [data-theme="dark"] is active
+themes:
+  purple:
+    header_bg: "#534AB7"
+    header_text: "#EEEDFE"
+    body_bg: "#EEEDFE"
+    body_text: "#3C3489"
+    border: "#AFA9EC"
+
+  navy:
+    header_bg: "#1F2A44"
+    header_text: "#F5F8FF"
+    body_bg: "#EAF0FF"
+    body_text: "#22314D"
+    border: "#9FB0D9"
+
+  green:
+    header_bg: "#0F6E56"
+    header_text: "#E1F5EE"
+    body_bg: "#E1F5EE"
+    body_text: "#085041"
+    border: "#9FE1CB"
+
+  brown:
+    header_bg: "#854F0B"
+    header_text: "#FAEEDA"
+    body_bg: "#FAEEDA"
+    body_text: "#633806"
+    border: "#FAC775"
+
+  yellow:
+    header_bg: "#B7791F"
+    header_text: "#FFF8E1"
+    body_bg: "#FFF8E1"
+    body_text: "#7A4E0A"
+    border: "#F2C066"
+
+  blue:
+    header_bg: "#0E5F6B"
+    header_text: "#DDF4F7"
+    body_bg: "#DDF4F7"
+    body_text: "#0A444E"
+    border: "#8DDDE8"
+
+  gray:
+    header_bg: "#F1EFE8"
+    header_text: "#444441"
+    body_bg: "#ffffff"
+    body_text: "#5F5E5A"
+    border: "#D3D1C7"
+    name_border: true
+    dark:
+      header_bg: "#2a2a27"
+      header_text: "#c8c6bc"
+      body_bg: "#222220"
+      body_text: "#8a8880"
+      border: "#3e3d39"
+
+  tbd:
+    header_bg: "#ffffff"
+    header_text: "#888780"
+    body_bg: "#ffffff"
+    body_text: "#888780"
+    border: "#B4B2A9"
+    name_border: true
+    dashed: true
+    dark:
+      header_bg: "#222220"
+      header_text: "#606058"
+      body_bg: "#222220"
+      body_text: "#606058"
+      border: "#3a3936"
+
+  pink:
+    header_bg: "#A62675"
+    header_text: "#FDEAF3"
+    body_bg: "#FDEAF3"
+    body_text: "#7A1955"
+    border: "#F2AFD3"
+
+  teal:
+    header_bg: "#0B6E6E"
+    header_text: "#E0F7F7"
+    body_bg: "#E0F7F7"
+    body_text: "#084F4F"
+    border: "#9FE3E3"
+
+  coral:
+    header_bg: "#C1440E"
+    header_text: "#FCEAE1"
+    body_bg: "#FCEAE1"
+    body_text: "#8A3009"
+    border: "#F5B48A"
+
+  indigo:
+    header_bg: "#4338A8"
+    header_text: "#ECEAFE"
+    body_bg: "#ECEAFE"
+    body_text: "#2E2678"
+    border: "#B7B0F0"
+
+  # Playful one: CSS custom properties happily hold a gradient, not just a
+  # flat color — header_bg/body_bg just get dropped straight into `background`.
+  rainbow:
+    header_bg: "linear-gradient(135deg, #FF6B6B 0%, #FFD93D 35%, #6BCB77 65%, #4D96FF 100%)"
+    header_text: "#1A1A1A"
+    body_bg: "linear-gradient(135deg, #FFF3E0 0%, #FFF9E0 50%, #E8F8EF 100%)"
+    body_text: "#3A2E1F"
+    border: "#FFD16B"
+    name_border: true
