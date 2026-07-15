@@ -33,7 +33,7 @@ root:
       members:
         - name: "Alexis I. Zapata"
           role: "Full Stack Software Eng."
-          func: "Automation"
+          func: "Automation - Windows"
           theme: gray
         - name: "Alfredo G. Araya"
           role: "IT Specialist"
@@ -41,19 +41,19 @@ root:
           theme: gray
         - name: "Benjamín E. Peñaloza"
           role: "IT Specialist"
-          func: "Automation"
+          func: "Automation - Legacy"
           theme: gray
         - name: "Jose M. González"
           role: "Process Owner"
-          func: "Automation"
+          func: "Automation - DBA Processes"
           theme: gray
         - name: "Nelson J. Castillo"
           role: "Process Owner"
-          func: "Automation"
+          func: "Automation - Linux"
           theme: gray
         - name: "Samuel A. Hernandez"
           role: "Principal FS Engineer"
-          func: "Cross"
+          func: "AiudA & Infra"
           theme: gray
         - name: "TBD"
           role: "Senior Fullstack Engineer"
