@@ -17,6 +17,10 @@
           "data-hide-externos",
           localStorage.getItem("hideExternos") === "1" ? "true" : "false",
         );
+        document.documentElement.setAttribute(
+          "data-yaml-panel",
+          localStorage.getItem("yamlPanel") === "1" ? "true" : "false",
+        );
       })();
     </script>
   </head>
@@ -41,6 +45,14 @@
           <span class="toggle-switch__track">
             <span class="toggle-switch__icon externos-toggle__eye">&#128065;</span>
             <span class="toggle-switch__icon externos-toggle__eye-off">&#128584;</span>
+            <span class="toggle-switch__thumb"></span>
+          </span>
+        </label>
+        <label class="toggle-switch yaml-toggle" title="Editar YAML">
+          <input type="checkbox" id="yamlCheck" />
+          <span class="toggle-switch__track">
+            <span class="toggle-switch__icon yaml-toggle__off">&#128196;</span>
+            <span class="toggle-switch__icon yaml-toggle__on">&#9998;</span>
             <span class="toggle-switch__thumb"></span>
           </span>
         </label>
@@ -82,7 +94,27 @@
       })();
     </script>
 
-    <div class="oc-wrap" id="oc-wrap"></div>
+    <div class="page">
+      <div class="oc-wrap" id="oc-wrap"></div>
+
+      <aside class="yaml-panel" id="yamlPanel" aria-hidden="true">
+        <div class="yaml-panel__bar">
+          <span class="yaml-panel__title">org.yaml</span>
+          <div class="yaml-panel__actions">
+            <button type="button" id="yamlCopy">Copiar</button>
+            <button type="button" id="yamlDownload">Descargar</button>
+            <button type="button" id="yamlReset">Restaurar</button>
+          </div>
+        </div>
+        <textarea
+          id="yamlText"
+          class="yaml-panel__text"
+          spellcheck="false"
+          autocomplete="off"
+        ></textarea>
+        <div class="yaml-panel__status" id="yamlStatus"></div>
+      </aside>
+    </div>
 
     <!-- js-yaml: YAML parser, no build step required -->
     <script src="https://cdn.jsdelivr.net/npm/js-yaml@4/dist/js-yaml.min.js"></script>
@@ -123,9 +155,15 @@
             }
           }
         }
-        const style = document.createElement("style");
+        // Se reutiliza un único <style>: con el editor en vivo esta función
+        // corre en cada cambio y no debe acumular elementos en el <head>.
+        let style = document.getElementById("oc-theme-styles");
+        if (!style) {
+          style = document.createElement("style");
+          style.id = "oc-theme-styles";
+          document.head.appendChild(style);
+        }
         style.textContent = lines.join("\n");
-        document.head.appendChild(style);
       }
 
       // Counts direct and total internal (non-external) reports under a node.
@@ -303,35 +341,15 @@
         });
       }
 
-      async function render() {
+      // Construye (o reconstruye) el organigrama completo a partir de un
+      // objeto ya parseado. Es idempotente: limpia el contenedor antes de
+      // dibujar, de modo que el editor pueda llamarla en cada cambio.
+      function buildChart(data, themes) {
+        if (!data || !data.root) throw new Error("falta la clave 'root'");
+        if (!data.meta) throw new Error("falta la clave 'meta'");
+
         const wrap = document.getElementById("oc-wrap");
-        let data, themes;
-
-        // org.local.yaml (datos reales, fuera de git y del deploy) tiene
-        // prioridad; si no existe se usa org.yaml, la estructura de demo.
-        async function fetchOrg() {
-          const local = await fetch("../data/org.local.yaml").catch(() => null);
-          if (local && local.ok) return local;
-          return fetch("../data/org.yaml");
-        }
-
-        try {
-          const [orgRes, themesRes] = await Promise.all([
-            fetchOrg(),
-            fetch("../data/themes.yaml"),
-          ]);
-          if (!orgRes.ok) throw new Error(`HTTP ${orgRes.status}`);
-          if (!themesRes.ok) throw new Error(`HTTP ${themesRes.status}`);
-          data = jsyaml.load(await orgRes.text());
-          themes = jsyaml.load(await themesRes.text()).themes;
-        } catch (e) {
-          const msg = document.createElement("p");
-          msg.className = "oc-error";
-          msg.textContent =
-            "No se pudo cargar data/org.yaml o data/themes.yaml. Sirve el proyecto desde la raiz con un servidor local.";
-          wrap.appendChild(msg);
-          return;
-        }
+        wrap.innerHTML = "";
 
         document.title = data.meta.title;
         document.getElementById("headerArea").textContent = data.meta.area;
@@ -357,6 +375,127 @@
         }
 
         updateConnectorBounds();
+      }
+
+      // Panel de edición: el YAML del textarea manda sobre el gráfico.
+      // Los cambios viven solo en el navegador — no se escriben en el
+      // servidor. Por eso están los botones de copiar/descargar.
+      function setupEditor(originalYaml, themes) {
+        const panel = document.getElementById("yamlPanel");
+        const check = document.getElementById("yamlCheck");
+        const text = document.getElementById("yamlText");
+        const status = document.getElementById("yamlStatus");
+
+        text.value = originalYaml;
+
+        function setOpen(open) {
+          document.documentElement.setAttribute(
+            "data-yaml-panel",
+            open ? "true" : "false",
+          );
+          panel.setAttribute("aria-hidden", open ? "false" : "true");
+          localStorage.setItem("yamlPanel", open ? "1" : "0");
+          // El panel reduce el ancho disponible del gráfico, así que los
+          // conectores horizontales necesitan recalcularse.
+          updateConnectorBounds();
+        }
+
+        const open = localStorage.getItem("yamlPanel") === "1";
+        check.checked = open;
+        setOpen(open);
+        check.addEventListener("change", function () {
+          setOpen(this.checked);
+        });
+
+        function apply() {
+          let parsed;
+          try {
+            parsed = jsyaml.load(text.value);
+          } catch (e) {
+            // YAML mal formado: se conserva el último gráfico válido en
+            // pantalla en lugar de dejarlo en blanco mientras se escribe.
+            status.textContent = `YAML inválido: ${e.reason || e.message}`;
+            status.dataset.state = "error";
+            return;
+          }
+          try {
+            buildChart(parsed, themes);
+            status.textContent = "Actualizado";
+            status.dataset.state = "ok";
+          } catch (e) {
+            status.textContent = `No se pudo dibujar: ${e.message}`;
+            status.dataset.state = "error";
+          }
+        }
+
+        // Debounce: reconstruir el árbol en cada pulsación es innecesario.
+        let timer;
+        text.addEventListener("input", () => {
+          clearTimeout(timer);
+          timer = setTimeout(apply, 250);
+        });
+
+        document.getElementById("yamlCopy").addEventListener("click", () => {
+          navigator.clipboard.writeText(text.value).then(() => {
+            status.textContent = "Copiado al portapapeles";
+            status.dataset.state = "ok";
+          });
+        });
+
+        document.getElementById("yamlDownload").addEventListener("click", () => {
+          const url = URL.createObjectURL(
+            new Blob([text.value], { type: "text/yaml" }),
+          );
+          const a = document.createElement("a");
+          a.href = url;
+          a.download = "org.yaml";
+          a.click();
+          URL.revokeObjectURL(url);
+        });
+
+        document.getElementById("yamlReset").addEventListener("click", () => {
+          text.value = originalYaml;
+          apply();
+          status.textContent = "Restaurado al original";
+          status.dataset.state = "ok";
+        });
+      }
+
+      async function render() {
+        const wrap = document.getElementById("oc-wrap");
+        let data, themes;
+
+        // org.local.yaml (datos reales, fuera de git y del deploy) tiene
+        // prioridad; si no existe se usa org.yaml, la estructura de demo.
+        async function fetchOrg() {
+          const local = await fetch("../data/org.local.yaml").catch(() => null);
+          if (local && local.ok) return local;
+          return fetch("../data/org.yaml");
+        }
+
+        let orgText;
+        try {
+          const [orgRes, themesRes] = await Promise.all([
+            fetchOrg(),
+            fetch("../data/themes.yaml"),
+          ]);
+          if (!orgRes.ok) throw new Error(`HTTP ${orgRes.status}`);
+          if (!themesRes.ok) throw new Error(`HTTP ${themesRes.status}`);
+          orgText = await orgRes.text();
+          data = jsyaml.load(orgText);
+          themes = jsyaml.load(await themesRes.text()).themes;
+        } catch (e) {
+          const msg = document.createElement("p");
+          msg.className = "oc-error";
+          msg.textContent =
+            "No se pudo cargar data/org.yaml o data/themes.yaml. Sirve el proyecto desde la raiz con un servidor local.";
+          wrap.appendChild(msg);
+          return;
+        }
+
+        buildChart(data, themes);
+        setupEditor(orgText, themes);
+
         window.addEventListener("resize", updateConnectorBounds);
       }
 

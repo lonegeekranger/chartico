@@ -149,13 +149,124 @@ body {
   color: #e0704a;
 }
 
+.yaml-toggle__off { color: #8a8880; }
+.yaml-toggle__on  { color: #8a8880; }
+
+.yaml-toggle input:checked + .toggle-switch__track .yaml-toggle__on {
+  color: #ffffff;
+}
+
 /* ---- Layout ---- */
+/* El gráfico y el panel de edición comparten el ancho de la ventana:
+   al abrir el panel, .oc-wrap se encoge en lugar de quedar tapado. */
+.page {
+  display: flex;
+  align-items: flex-start;
+}
+
 .oc-wrap {
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 0;
   padding: 32px 16px;
+  flex: 1;
+  min-width: 0;
+  overflow-x: auto;
+}
+
+/* ---- Panel de edición YAML ---- */
+.yaml-panel {
+  display: none;
+  flex-direction: column;
+  width: min(460px, 42vw);
+  flex-shrink: 0;
+  height: calc(100vh - 52px);
+  position: sticky;
+  top: 52px;
+  background: var(--header-bg);
+  border-left: 1px solid var(--header-border);
+}
+
+[data-yaml-panel="true"] .yaml-panel {
+  display: flex;
+}
+
+.yaml-panel__bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--header-border);
+}
+
+.yaml-panel__title {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--header-text);
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+
+.yaml-panel__actions {
+  display: flex;
+  gap: 6px;
+}
+
+.yaml-panel__actions button {
+  font-family: var(--font);
+  font-size: 11px;
+  padding: 4px 8px;
+  color: var(--header-sub);
+  background: transparent;
+  border: 1px solid var(--header-border);
+  border-radius: 5px;
+  cursor: pointer;
+  transition: color 0.15s, border-color 0.15s;
+}
+
+.yaml-panel__actions button:hover {
+  color: var(--header-text);
+  border-color: var(--header-sub);
+}
+
+.yaml-panel__text {
+  flex: 1;
+  width: 100%;
+  resize: none;
+  border: 0;
+  outline: none;
+  padding: 12px;
+  background: transparent;
+  color: var(--header-text);
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 12px;
+  line-height: 1.5;
+  tab-size: 2;
+  white-space: pre;
+}
+
+.yaml-panel__status {
+  padding: 6px 12px;
+  min-height: 26px;
+  font-size: 11px;
+  border-top: 1px solid var(--header-border);
+  color: var(--header-sub);
+}
+
+.yaml-panel__status[data-state="ok"]    { color: #3f9a63; }
+.yaml-panel__status[data-state="error"] { color: #d2603f; }
+
+/* En pantallas angostas el panel pasa a ocupar todo el ancho. */
+@media (max-width: 720px) {
+  .page { flex-direction: column; }
+  .yaml-panel {
+    width: 100%;
+    height: 60vh;
+    position: static;
+    border-left: 0;
+    border-top: 1px solid var(--header-border);
+  }
 }
 
 .oc-columns {
