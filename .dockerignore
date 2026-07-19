@@ -1,0 +1,12 @@
+.git
+.github
+.claude
+backup
+docs
+scripts
+README.md
+.gitignore
+
+# Datos reales: jamás deben entrar en la imagen desplegada.
+data/org.local.yaml
+data/*.local.yaml

@@ -1,0 +1,37 @@
+server {
+    listen       ${PORT};
+    server_name  _;
+
+    root  /usr/share/nginx/html;
+    index index.html;
+
+    # Cloud Run termina TLS por delante: nginx solo ve http y su puerto
+    # interno. Sin esto, los redirects saldrían como http://host:8080/...
+    absolute_redirect off;
+
+    gzip             on;
+    gzip_types       text/plain text/css application/javascript text/yaml application/yaml;
+    gzip_min_length  512;
+
+    # El sitio vive en /src/; la raíz redirige ahí.
+    location = / {
+        return 302 /src/;
+    }
+
+    location /src/ {
+        try_files $uri $uri/ =404;
+    }
+
+    # Los YAML son la fuente de datos: sin cache para que un redeploy
+    # se refleje de inmediato.
+    location /data/ {
+        default_type      text/yaml;
+        add_header        Cache-Control "no-store";
+        try_files $uri =404;
+    }
+
+    location = /healthz {
+        access_log off;
+        return 200 "ok\n";
+    }
+}
