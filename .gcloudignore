@@ -1,0 +1,12 @@
+# Qué NO se sube a Cloud Build en `gcloud run deploy --source`.
+# Ojo: gcloud usa este archivo, no .dockerignore.
+.git
+.github
+.claude
+backup
+docs
+README.md
+
+# Datos reales del organigrama: nunca salen del equipo local.
+data/org.local.yaml
+data/*.local.yaml

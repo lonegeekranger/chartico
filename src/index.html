@@ -307,9 +307,17 @@
         const wrap = document.getElementById("oc-wrap");
         let data, themes;
 
+        // org.local.yaml (datos reales, fuera de git y del deploy) tiene
+        // prioridad; si no existe se usa org.yaml, la estructura de demo.
+        async function fetchOrg() {
+          const local = await fetch("../data/org.local.yaml").catch(() => null);
+          if (local && local.ok) return local;
+          return fetch("../data/org.yaml");
+        }
+
         try {
           const [orgRes, themesRes] = await Promise.all([
-            fetch("../data/org.yaml"),
+            fetchOrg(),
             fetch("../data/themes.yaml"),
           ]);
           if (!orgRes.ok) throw new Error(`HTTP ${orgRes.status}`);

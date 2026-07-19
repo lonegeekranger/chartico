@@ -1,7 +1,13 @@
 meta:
-  title: "Organigrama · Automation & Monitoring"
-  area: "Infrastructure and Operations"
-  team: "Automation & Monitoring"
+  title: "Organigrama · Platform Engineering"
+  area: "Nimbus Labs · Technology"
+  team: "Platform Engineering"
+
+# Datos de ejemplo. Estructura y empresa ficticias; los nombres son de
+# figuras públicas usadas como relleno reconocible, sin relación con sus
+# cargos reales.
+# Para trabajar con datos reales crea `data/org.local.yaml` (ignorado por git):
+# la página lo carga en su lugar si existe.
 
 # Color themes live in themes.yaml (key referenced by each node's `theme` field).
 
@@ -20,70 +26,70 @@ meta:
 # (only members, no header card). Presence of `name` = there is a header card.
 
 root:
-  name: "William Añez"
+  name: "Jensen Huang"
   role: "Tech Director"
-  func: "Automation & Monitoring"
+  func: "Platform Engineering"
   level: 3
   theme: navy
   columns:
-    - name: "María del Carmen Allones"
+    - name: "Satya Nadella"
       role: "Platform Owner Team Lead"
-      func: "Automation & AiudA"
+      func: "Automation & Tooling"
       theme: pink
       members:
-        - name: "Alexis I. Zapata"
+        - name: "Tim Cook"
           role: "Full Stack Software Eng."
           func: "Automation - Windows"
           theme: gray
-        - name: "Alfredo G. Araya"
+        - name: "Lisa Su"
           role: "IT Specialist"
           func: "Automation"
           theme: gray
-        - name: "Benjamín E. Peñaloza"
+        - name: "Elon Musk"
           role: "IT Specialist"
           func: "Automation - Legacy"
           theme: gray
-        - name: "Jose M. González"
+        - name: "Mark Zuckerberg"
           role: "Process Owner"
           func: "Automation - DBA Processes"
           theme: gray
-        - name: "Nelson J. Castillo"
+        - name: "Sam Altman"
           role: "Process Owner"
           func: "Automation - Linux"
           theme: gray
-        - name: "Samuel A. Hernandez"
+        - name: "Dario Amodei"
           role: "Principal FS Engineer"
-          func: "AiudA & Infra"
+          func: "Tooling & Infra"
           theme: gray
         - name: "TBD"
           role: "Senior Fullstack Engineer"
-          func: "AiudA"
+          func: "Tooling"
           theme: tbd
           badge: "NEW"
 
-    - name: "Henry Hormaza"
+    - name: "Sundar Pichai"
       role: "Principal Platform Owner"
       func: "Automation Backend"
       theme: gray
 
-    - name: "Eduardo Alarcon"
+    - name: "Andy Jassy"
       role: "Tech Manager"
       func: "Monitoring & AI"
       theme: coral
       members:
-        - name: "Germán H. Millán Leal"
+        - name: "Safra Catz"
           role: "Platform Owner Team Lead"
           func: "Observability"
           theme: gray
-        - name: "Rodolfo Vásquez"
+        - name: "Marc Benioff"
           role: "IT Specialist"
           func: "Observability"
           theme: gray
-        - name: "Eduardo Chavero"
+        - name: "Michael Dell"
           role: "IT Specialist"
           func: "Observability"
           theme: gray
-        - name: "María Soledad Calvo"
+        - name: "Arvind Krishna"
           role: "Platform Owner"
           func: "Observability"
           theme: gray
@@ -107,27 +113,27 @@ root:
           func: "Observability"
           theme: tbd
           badge: "NEW"
-        - name: "Christian Mendoza"
+        - name: "Brian Chesky"
           role: "Development"
           func: "Observability"
           theme: gray
           badge: "E"
-        - name: "Diego Hormazábal"
-          role: "L2 AppDynamics"
+        - name: "Dara Khosrowshahi"
+          role: "L2 APM"
           func: "Observability"
           theme: gray
           badge: "E"
-        - name: "Juan Barrera"
-          role: "L2 Nagios"
+        - name: "Hock Tan"
+          role: "L2 Alerting"
           func: "Observability"
           theme: gray
           badge: "E"
-        - name: "Bastian Chavez"
+        - name: "Cristiano Amon"
           role: "Consultor"
-          func: "AiudA"
+          func: "Tooling"
           theme: gray
           badge: "E"
-        - name: "Guillermo Vidal"
+        - name: "Chuck Robbins"
           role: "Consultor"
           func: "Observability"
           theme: gray

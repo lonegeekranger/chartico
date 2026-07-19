@@ -8,8 +8,13 @@ Archivos principales:
 
 - `src/index.html`: estructura base y lógica de render.
 - `src/styles.css`: estilos del organigrama y tema claro/oscuro.
-- `data/org.yaml`: fuente de datos (personas, jerarquía y temas).
+- `data/org.yaml`: estructura de demo (ficticia). Es la que se versiona y se despliega.
+- `data/org.local.yaml`: datos reales, opcional. Ignorado por git y excluido de la imagen Docker.
 - `scripts/serve.sh`: script para servir el proyecto localmente.
+- `scripts/deploy.sh`: despliegue manual a Cloud Run.
+
+Si existe `data/org.local.yaml`, la página lo carga en lugar de `data/org.yaml`.
+Así el organigrama real solo se ve en local y nunca sale del equipo.
 
 ## 2. Como funciona org.yaml
 

@@ -6,7 +6,10 @@
 .idea/
 *.code-workspace
 .claude/
-.github/
+# Se ignora el contenido de .github (no el directorio: si se excluye el
+# directorio, git no desciende y el `!` de abajo no puede reincluir nada).
+.github/*
+!.github/workflows/
 
 # Entorno y secretos
 .env
@@ -37,3 +40,7 @@ coverage/
 
 # misc
 backup/
+
+# Datos reales del organigrama: nunca se versionan ni se despliegan.
+# `data/org.yaml` versionado es la estructura ficticia de demo.
+data/org.local.yaml
