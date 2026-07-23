@@ -56,6 +56,14 @@
             <span class="toggle-switch__thumb"></span>
           </span>
         </label>
+        <button
+          type="button"
+          id="exportPngBtn"
+          class="header-btn"
+          title="Exportar el organigrama como PNG con fondo transparente"
+        >
+          Exportar PNG
+        </button>
       </div>
     </header>
 
@@ -175,6 +183,8 @@
 
     <!-- js-yaml: YAML parser, no build step required -->
     <script src="https://cdn.jsdelivr.net/npm/js-yaml@4/dist/js-yaml.min.js"></script>
+    <!-- html2canvas: rasteriza el organigrama a PNG para exportar -->
+    <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
     <script>
       // Inject a <style> block with per-theme CSS custom properties derived from org.yaml.
       // Each .oc-box[data-ct="<theme>"] block sets --t-* variables consumed by styles.css.
@@ -610,6 +620,47 @@
         });
       }
 
+      // Nombre de archivo a partir del título del organigrama, sin acentos
+      // ni caracteres especiales (para que descargue limpio en cualquier SO).
+      function slugify(text) {
+        const base = (text || "organigrama")
+          .toString()
+          .normalize("NFD")
+          .replace(/[\u0300-\u036f]/g, "")
+          .toLowerCase()
+          .replace(/[^a-z0-9]+/g, "-")
+          .replace(/^-+|-+$/g, "");
+        return base || "organigrama";
+      }
+
+      // Exporta solo #oc-wrap (la estructura del organigrama) a PNG con
+      // fondo transparente, para que se pueda insertar en un PPT sin que
+      // arrastre el fondo de la página.
+      function setupExport() {
+        const btn = document.getElementById("exportPngBtn");
+        btn.addEventListener("click", async () => {
+          const target = document.getElementById("oc-wrap");
+          const original = btn.textContent;
+          btn.disabled = true;
+          btn.textContent = "Generando...";
+          try {
+            const canvas = await html2canvas(target, {
+              backgroundColor: null,
+              scale: 2,
+            });
+            const link = document.createElement("a");
+            link.download = `${slugify(document.title)}.png`;
+            link.href = canvas.toDataURL("image/png");
+            link.click();
+          } catch (e) {
+            alert("No se pudo exportar el PNG: " + e.message);
+          } finally {
+            btn.disabled = false;
+            btn.textContent = original;
+          }
+        });
+      }
+
       async function render() {
         const wrap = document.getElementById("oc-wrap");
         let data, themes;
@@ -648,6 +699,7 @@
         window.addEventListener("resize", updateConnectorBounds);
       }
 
+      setupExport();
       render();
     </script>
   </body>
