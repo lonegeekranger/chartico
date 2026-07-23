@@ -156,6 +156,28 @@ body {
   color: #ffffff;
 }
 
+/* ---- Header button (Exportar PNG) ---- */
+.header-btn {
+  font-family: var(--font);
+  font-size: 12px;
+  padding: 5px 10px;
+  color: var(--header-text);
+  background: transparent;
+  border: 1px solid var(--header-border);
+  border-radius: 6px;
+  cursor: pointer;
+  transition: color 0.15s, border-color 0.15s;
+}
+
+.header-btn:hover {
+  border-color: var(--header-sub);
+}
+
+.header-btn:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
 /* ---- Layout ---- */
 /* El gráfico y el panel de edición comparten el ancho de la ventana:
    al abrir el panel, .oc-wrap se encoge en lugar de quedar tapado. */
