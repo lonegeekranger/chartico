@@ -101,6 +101,7 @@
         <div class="yaml-panel__bar">
           <span class="yaml-panel__title">org.yaml</span>
           <div class="yaml-panel__actions">
+            <button type="button" id="yamlHelp" title="Ayuda">&#10067; Ayuda</button>
             <button type="button" id="yamlCopy">Copiar</button>
             <button type="button" id="yamlDownload">Descargar</button>
             <button type="button" id="yamlReset">Restaurar</button>
@@ -112,8 +113,64 @@
           spellcheck="false"
           autocomplete="off"
         ></textarea>
+        <div class="yaml-panel__toolbar">
+          <div class="yaml-panel__toolbar-group">
+            <button type="button" id="yamlInsertPersona" title="Insertar una persona en el cursor">+ Persona</button>
+            <button type="button" id="yamlInsertColumna" title="Insertar una columna con cabecera en el cursor">+ Columna</button>
+            <button type="button" id="yamlInsertGrupo" title="Insertar un grupo sin cabecera en el cursor">+ Grupo</button>
+          </div>
+          <div class="yaml-panel__toolbar-group">
+            <button type="button" id="yamlFormat" title="Formatear el YAML">Formatear YAML</button>
+          </div>
+        </div>
         <div class="yaml-panel__status" id="yamlStatus"></div>
       </aside>
+    </div>
+
+    <div class="modal-overlay" id="yamlHelpModal" aria-hidden="true">
+      <div class="modal" role="dialog" aria-modal="true" aria-labelledby="yamlHelpTitle">
+        <div class="modal__header">
+          <span id="yamlHelpTitle">Cómo editar el organigrama</span>
+          <button type="button" class="modal__close" id="yamlHelpClose" aria-label="Cerrar">&times;</button>
+        </div>
+        <div class="modal__body">
+          <p><strong>meta</strong> — datos del encabezado de la página:</p>
+          <ul>
+            <li><code>title</code>: título de la pestaña del navegador.</li>
+            <li><code>area</code> / <code>team</code>: texto del encabezado (área : equipo).</li>
+          </ul>
+
+          <p><strong>Cada nodo (persona)</strong> acepta estos campos:</p>
+          <ul>
+            <li><code>name</code>, <code>role</code>, <code>func</code>: nombre, cargo y función mostrados en la tarjeta.</li>
+            <li><code>theme</code>: color de la tarjeta (clave definida en <code>themes.yaml</code>, ej. <code>navy</code>, <code>gray</code>, <code>pink</code>...).</li>
+            <li><code>level</code>: solo en el nodo raíz — el nivel numérico desde el que arranca el organigrama.</li>
+            <li><code>badge</code> (opcional): <code>"E"</code> dibuja un círculo gris (externo), <code>"NEW"</code> dibuja una píldora naranja.</li>
+            <li><code>emoji</code> (opcional): un emoji en la esquina superior derecha. Si hay <code>badge</code>, este tiene prioridad.</li>
+          </ul>
+
+          <p><strong>Jerarquía</strong>:</p>
+          <ul>
+            <li><code>members</code>: lista de personas apiladas debajo del nodo, unidas por una línea corta.</li>
+            <li><code>columns</code>: lista de sub-columnas mostradas en paralelo debajo del nodo.</li>
+            <li>Una entrada de <code>columns</code> sin <code>name</code>/<code>role</code>/<code>func</code>/<code>theme</code> es <em>anónima</em>: no dibuja tarjeta de cabecera, solo agrupa sus <code>members</code> o <code>columns</code>.</li>
+          </ul>
+
+          <p><strong>Ejemplo:</strong></p>
+          <pre><code>- name: "Ada Lovelace"
+  role: "Engineering Manager"
+  func: "Platform"
+  theme: purple
+  members:
+    - name: "Grace Hopper"
+      role: "Senior Engineer"
+      func: "Backend"
+      theme: gray
+      badge: "NEW"</code></pre>
+
+          <p>Los botones <strong>+ Persona</strong>, <strong>+ Columna</strong> y <strong>+ Grupo</strong> insertan estos bloques listos para completar justo donde esté el cursor. <strong>Formatear YAML</strong> reordena la indentación (elimina los comentarios al reescribirlo).</p>
+        </div>
+      </div>
     </div>
 
     <!-- js-yaml: YAML parser, no build step required -->
@@ -458,6 +515,98 @@
           apply();
           status.textContent = "Restaurado al original";
           status.dataset.state = "ok";
+        });
+
+        // Bloques rápidos: se insertan como items de lista ("- name: ...")
+        // indentados al nivel de la línea donde esté el cursor, para que
+        // encajen bajo el `members:`/`columns:` correspondiente.
+        const SNIPPETS = {
+          persona:
+            '- name: "Nombre Apellido"\n  role: "Cargo"\n  func: "Función"\n  theme: gray',
+          columna:
+            '- name: "Nombre Apellido"\n  role: "Cargo"\n  func: "Función"\n  theme: gray\n  members:\n    - name: "Nombre Apellido"\n      role: "Cargo"\n      func: "Función"\n      theme: gray',
+          grupo:
+            '- members:\n    - name: "Nombre Apellido"\n      role: "Cargo"\n      func: "Función"\n      theme: gray',
+        };
+
+        function insertSnippet(snippet) {
+          text.focus();
+          const start = text.selectionStart;
+          const end = text.selectionEnd;
+          const value = text.value;
+          const lineStart = value.lastIndexOf("\n", start - 1) + 1;
+          let lineEnd = value.indexOf("\n", lineStart);
+          if (lineEnd === -1) lineEnd = value.length;
+          const currentLine = value.slice(lineStart, lineEnd);
+          const indent = (currentLine.match(/^[ \t]*/) || [""])[0];
+
+          const indented = snippet
+            .split("\n")
+            .map((line) => indent + line)
+            .join("\n");
+          const insertText = "\n" + indented;
+
+          text.setRangeText(insertText, start, end, "end");
+
+          // Deja seleccionado el primer placeholder para que se pueda
+          // sobrescribir directamente sin buscar el campo a mano.
+          const nameOffset = insertText.indexOf('"Nombre Apellido"');
+          if (nameOffset !== -1) {
+            const selStart = start + nameOffset + 1;
+            const selEnd = selStart + "Nombre Apellido".length;
+            text.setSelectionRange(selStart, selEnd);
+          }
+
+          apply();
+        }
+
+        document
+          .getElementById("yamlInsertPersona")
+          .addEventListener("click", () => insertSnippet(SNIPPETS.persona));
+        document
+          .getElementById("yamlInsertColumna")
+          .addEventListener("click", () => insertSnippet(SNIPPETS.columna));
+        document
+          .getElementById("yamlInsertGrupo")
+          .addEventListener("click", () => insertSnippet(SNIPPETS.grupo));
+
+        document.getElementById("yamlFormat").addEventListener("click", () => {
+          let parsed;
+          try {
+            parsed = jsyaml.load(text.value);
+          } catch (e) {
+            status.textContent = `No se pudo formatear: ${e.reason || e.message}`;
+            status.dataset.state = "error";
+            return;
+          }
+          text.value = jsyaml.dump(parsed, {
+            indent: 2,
+            lineWidth: -1,
+            noRefs: true,
+          });
+          apply();
+          status.textContent = "YAML formateado (se eliminaron los comentarios)";
+          status.dataset.state = "ok";
+        });
+
+        const helpModal = document.getElementById("yamlHelpModal");
+        function setHelpOpen(open) {
+          helpModal.setAttribute("data-open", open ? "true" : "false");
+          helpModal.setAttribute("aria-hidden", open ? "false" : "true");
+        }
+        document
+          .getElementById("yamlHelp")
+          .addEventListener("click", () => setHelpOpen(true));
+        document
+          .getElementById("yamlHelpClose")
+          .addEventListener("click", () => setHelpOpen(false));
+        helpModal.addEventListener("click", (e) => {
+          if (e.target === helpModal) setHelpOpen(false);
+        });
+        document.addEventListener("keydown", (e) => {
+          if (e.key === "Escape" && helpModal.getAttribute("data-open") === "true") {
+            setHelpOpen(false);
+          }
         });
       }
 
